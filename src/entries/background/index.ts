@@ -1,0 +1,65 @@
+import { getSettings, saveSettings } from "./prefs";
+import {
+  getMeetingHistory,
+  saveMeetingSession,
+  deleteMeetingSession,
+  updateMeetingSession,
+  clearMeetingHistory,
+  importMeetingHistory,
+  getStorageUsage,
+} from "./session-store";
+
+export default defineBackground(() => {
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    handleMessage(message)
+      .then(sendResponse)
+      .catch((error) => {
+        sendResponse({ success: false, error: String(error) });
+      });
+
+    return true;
+  });
+});
+
+async function handleMessage(message: Record<string, unknown>): Promise<unknown> {
+  switch (message.action) {
+    case "getSettings":
+      return getSettings();
+
+    case "saveSettings":
+      return saveSettings(message.settings as Parameters<typeof saveSettings>[0]);
+
+    case "openOptions":
+      chrome.runtime.openOptionsPage();
+      return { success: true };
+
+    case "getMeetingHistory":
+      return getMeetingHistory();
+
+    case "saveMeetingSession":
+      return saveMeetingSession(message.session as Parameters<typeof saveMeetingSession>[0]);
+
+    case "deleteMeetingSession":
+      return deleteMeetingSession(message.sessionId as string);
+
+    case "updateMeetingSession":
+      return updateMeetingSession(
+        message.sessionId as string,
+        message.updates as Parameters<typeof updateMeetingSession>[1]
+      );
+
+    case "clearMeetingHistory":
+      return clearMeetingHistory();
+
+    case "importMeetingHistory":
+      return importMeetingHistory(
+        message.sessions as Parameters<typeof importMeetingHistory>[0]
+      );
+
+    case "getStorageUsage":
+      return getStorageUsage();
+
+    default:
+      return { success: false, error: "Unknown action" };
+  }
+}

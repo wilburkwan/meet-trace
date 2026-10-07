@@ -1,0 +1,25 @@
+{
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "types": ["chrome"],
+    "baseUrl": ".",
+    "paths": {
+      "@live/*": ["src/entries/live.content/*"],
+      "@": ["src"],
+      "@/*": ["src/*"],
+      "~": ["src"],
+      "~/*": ["src/*"],
+      "@@": ["."],
+      "@@/*": ["*"],
+      "~~": ["."],
+      "~~/*": ["*"]
+    },
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}

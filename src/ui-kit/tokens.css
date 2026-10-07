@@ -1,0 +1,133 @@
+/*
+ * Meet Trace design tokens.
+ * Theme-independent tokens live on :root; each colour theme is selected with
+ * [data-ms-theme] on <html> (extension pages) or the overlay root element.
+ * Theme ids must match src/core/theme/index.ts.
+ */
+:root {
+  color-scheme: dark;
+  --ms-overlay-control: rgb(255 255 255 / 10%);
+  --ms-overlay-control-hover: rgb(255 255 255 / 15%);
+  --ms-overlay-border: rgb(255 255 255 / 10%);
+  --ms-overlay-control-border: rgb(255 255 255 / 20%);
+  --ms-overlay-muted: #7d7896;
+  --ms-overlay-text-primary: #ffffff;
+  --ms-overlay-caption: #e7e5ee;
+  --ms-danger: #fb2c36;
+  --ms-danger-text: #ffa2a2;
+}
+
+/* Default theme (aurora) also applies when no theme attribute is set. */
+:root,
+[data-ms-theme="aurora"] {
+  --ms-overlay-bg: #17151f;
+  --ms-overlay-header: #221f2e;
+  --ms-overlay-translation: #b49cff;
+  --ms-app-canvas: #121018;
+  --ms-app-surface: rgb(36 32 48 / 60%);
+  --ms-app-surface-solid: #242030;
+  --ms-app-border: rgb(76 68 99 / 50%);
+  --ms-app-field-border: #4a4361;
+  --ms-app-field-hover: #6b6189;
+  --ms-app-text: #f4f2fa;
+  --ms-app-text-emphasis: #d9d3ea;
+  --ms-app-text-secondary: #a49cbc;
+  --ms-positive: #b49cff;
+  --ms-primary: #7c5cff;
+  --ms-primary-hover: #6a48f0;
+  --ms-secondary: #2e2a3d;
+  --ms-secondary-hover: #403a55;
+}
+
+[data-ms-theme="ocean"] {
+  --ms-overlay-bg: #0d1b2a;
+  --ms-overlay-header: #132a40;
+  --ms-overlay-translation: #5ad1ff;
+  --ms-app-canvas: #0a1622;
+  --ms-app-surface: rgb(19 42 64 / 55%);
+  --ms-app-surface-solid: #132a40;
+  --ms-app-border: rgb(40 75 105 / 55%);
+  --ms-app-field-border: #2f5677;
+  --ms-app-field-hover: #44759c;
+  --ms-app-text: #eef6fc;
+  --ms-app-text-emphasis: #c7dcec;
+  --ms-app-text-secondary: #8aa9c2;
+  --ms-positive: #3fd0f5;
+  --ms-primary: #0e93c4;
+  --ms-primary-hover: #0b7aa3;
+  --ms-secondary: #1c3a55;
+  --ms-secondary-hover: #27506f;
+}
+
+[data-ms-theme="forest"] {
+  --ms-overlay-bg: #111a14;
+  --ms-overlay-header: #1a2a1f;
+  --ms-overlay-translation: #9be37a;
+  --ms-app-canvas: #0d140f;
+  --ms-app-surface: rgb(28 44 33 / 55%);
+  --ms-app-surface-solid: #1c2c21;
+  --ms-app-border: rgb(52 80 60 / 55%);
+  --ms-app-field-border: #3c5c45;
+  --ms-app-field-hover: #52795c;
+  --ms-app-text: #eff7f0;
+  --ms-app-text-emphasis: #cfe3d3;
+  --ms-app-text-secondary: #93ad98;
+  --ms-positive: #7fdc6a;
+  --ms-primary: #3f9f4f;
+  --ms-primary-hover: #348a42;
+  --ms-secondary: #22382a;
+  --ms-secondary-hover: #2f4b38;
+}
+
+[data-ms-theme="sunset"] {
+  --ms-overlay-bg: #1d1514;
+  --ms-overlay-header: #2b1e1c;
+  --ms-overlay-translation: #ffb37a;
+  --ms-app-canvas: #161010;
+  --ms-app-surface: rgb(48 33 30 / 55%);
+  --ms-app-surface-solid: #30211e;
+  --ms-app-border: rgb(92 62 55 / 55%);
+  --ms-app-field-border: #6a4740;
+  --ms-app-field-hover: #8a5f56;
+  --ms-app-text: #fbf3f0;
+  --ms-app-text-emphasis: #ead5cf;
+  --ms-app-text-secondary: #b9a09a;
+  --ms-positive: #ffa45c;
+  --ms-primary: #d9662f;
+  --ms-primary-hover: #bf5526;
+  --ms-secondary: #3b2a27;
+  --ms-secondary-hover: #523a35;
+}
+
+/* Base element styles live in the base layer so Tailwind utilities can override them. */
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC",
+      "Segoe UI", "Microsoft JhengHei", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: var(--ms-app-canvas);
+    color: var(--ms-app-text);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--ms-positive);
+    outline-offset: 2px;
+  }
+}
