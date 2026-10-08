@@ -1,52 +1,54 @@
-import { formatMeetingDateTime } from "./date-stamp";
+import type { Translate, UiLocale } from "@/core/i18n";
+import { formatFullDate, sessionTitle } from "../format";
 import type { MeetingSession } from "./records";
 
-const buildCaptionTranscript = (session: MeetingSession): string =>
+const buildCaptionLines = (session: MeetingSession, t: Translate): string =>
   session.captions
     .map((caption) => {
       const lines = [`[${caption.time}] ${caption.speaker}: ${caption.text}`];
       if (caption.translation) {
-        lines.push(`Translation: ${caption.translation}`);
+        lines.push(`${t("history.promptTranslation")}: ${caption.translation}`);
       }
       return lines.join("\n");
     })
     .join("\n\n");
 
-const buildChatTranscript = (session: MeetingSession): string =>
+const buildChatLines = (session: MeetingSession): string =>
   (session.chatMessages ?? [])
     .map((message) => `[${message.time}] ${message.author}: ${message.text}`)
     .join("\n");
 
-const buildMeetingRecord = (session: MeetingSession): string => {
-  const captions = buildCaptionTranscript(session) || "No captions captured.";
-  const chat = buildChatTranscript(session) || "No chat messages captured.";
-  const notes = session.notes?.trim() || "No notes taken.";
+/** Summary prompt for an AI assistant, written in the UI language. */
+export const buildSummaryPrompt = (session: MeetingSession, locale: UiLocale, t: Translate): string => {
+  const none = t("history.promptNone");
+  const formatTime = (timestamp?: number) =>
+    timestamp ? formatFullDate(timestamp, locale) : t("history.promptNotRecorded");
 
-  return `Spoken transcript:\n${captions}\n\nMeeting chat:\n${chat}\n\nMy meeting notes:\n${notes}`;
+  return t("history.summaryPrompt", {
+    title: sessionTitle(session, t),
+    code: session.meetingCode,
+    started: formatTime(session.startTime),
+    ended: formatTime(session.endTime),
+    captions: buildCaptionLines(session, t) || none,
+    chat: buildChatLines(session) || none,
+    notes: session.notes?.trim() || none,
+  });
 };
 
-export const buildSummaryPrompt = (session: MeetingSession): string => {
-  const title = session.title || `Meeting ${session.meetingCode}`;
-
-  return `You are a meeting analyst. Summarize the meeting transcript below.
-
-Return a clear, concise report with these sections:
-1. Executive summary
-2. Key decisions
-3. Action items grouped by person
-   - Include the task, owner, deadline, and dependencies when available.
-   - Use "Unassigned" or "Not specified" when the meeting does not provide the information.
-4. Open questions and follow-ups
-
-Do not invent facts, decisions, owners, or deadlines. Respond in the predominant language used in the meeting.
-Use my meeting notes as extra context and highlight anything I noted as important.
-
-Meeting: ${title}
-Meeting code: ${session.meetingCode}
-Started: ${formatMeetingDateTime(session.startTime)}
-Ended: ${formatMeetingDateTime(session.endTime)}
-
-Below is the complete meeting record, including spoken captions, chat messages, and my notes:
-
-${buildMeetingRecord(session)}`;
+/**
+ * The whole meeting as plain text, in the same format as the in-meeting
+ * "Copy entire transcript" button: captions, translations underneath, chat at the end.
+ */
+export const buildTranscriptText = (session: MeetingSession, locale: UiLocale, t: Translate): string => {
+  const lines = [sessionTitle(session, t), formatFullDate(session.startTime, locale), ""];
+  for (const caption of session.captions) {
+    lines.push(`[${caption.time}] ${caption.speaker}: ${caption.text}`);
+    if (caption.translation) lines.push(`    → ${caption.translation}`);
+  }
+  const chat = session.chatMessages ?? [];
+  if (chat.length > 0) {
+    lines.push("", `— ${t("overlay.chatHeading")} —`);
+    for (const message of chat) lines.push(`[${message.time}] ${message.author}: ${message.text}`);
+  }
+  return lines.join("\n").trim();
 };

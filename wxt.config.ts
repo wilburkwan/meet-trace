@@ -11,6 +11,10 @@ const contentAppId = `meettrace-app-${randomUUID()}`;
 
 export default defineConfig({
   srcDir: "src",
+  // Build to dist/ (not the hidden .output/) so "Load unpacked" is easy to find.
+  outDir: "dist",
+  // dist/meet-trace for builds, dist/meet-trace-dev for `pnpm dev`.
+  outDirTemplate: "meet-trace{{modeSuffix}}",
   entrypointsDir: "entries",
   publicDir: "public",
   hooks: {

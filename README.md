@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/images/logo.png" alt="Meet Trace" width="160"></p>
+<p align="center"><img src="store/images/logo.png" alt="Meet Trace" width="160"></p>
 
 <h1 align="center">Meet Trace</h1>
 
@@ -32,7 +32,7 @@
 | 功能 | 說明 |
 |---|---|
 | 會議紀錄頁 | iOS 風格介面，依日期整理，可搜尋標題、發言人或內容 |
-| 匯出 | CSV / TXT，或複製摘要提示詞交給 ChatGPT |
+| 匯出 | CSV / TXT；一鍵複製全部對話記錄，或複製摘要提示詞（跟隨介面語言）貼給 AI |
 | 備份與還原 | JSON 備份，換電腦也能帶走；本機最多可存 25 MB |
 
 ### YouTube 逐字稿
@@ -74,7 +74,7 @@ pnpm zip          # 打包成可上架 Chrome 線上應用程式商店的 zip
 
 1. 開啟 `chrome://extensions/`
 2. 開啟右上角「開發人員模式」
-3. 點「載入未封裝項目」，選擇 `.output/chrome-mv3` 資料夾
+3. 點「載入未封裝項目」，選擇 `dist/meet-trace` 資料夾
 
 技術：WXT、React 19、TypeScript、Tailwind CSS v4、Chrome Translator API。
 
@@ -82,7 +82,7 @@ pnpm zip          # 打包成可上架 Chrome 線上應用程式商店的 zip
 
 - 字幕、翻譯、筆記與設定都只存在你的瀏覽器（`chrome.storage.local`）。
 - 翻譯由 Chrome 在你的電腦上執行，不會把會議內容傳到任何伺服器。
-- 只有在你按下「用 ChatGPT 摘要」時，才會開啟 ChatGPT 網頁並帶入內容。
+- 只有在你按下「複製」時，內容才會放到你的剪貼簿；擴充功能不會自行把內容送到任何網站。
 
 ## 授權
 

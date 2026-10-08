@@ -20,7 +20,7 @@ Meet Trace（以下稱「本擴充功能」）重視你的隱私。
 翻譯使用 Chrome 內建的翻譯功能，在你的電腦上執行，不會把內容傳到外部伺服器。
 
 **你主動分享的內容**
-當你按下「用 ChatGPT 摘要」時，本擴充功能會開啟 chatgpt.com 並帶入該場會議的內容；當你使用「複製」功能時，內容會放到你的剪貼簿。這些動作只會在你主動點擊時發生，之後的處理適用該服務自身的隱私權政策。
+當你使用「複製」功能時，內容會放到你的剪貼簿。這只會在你主動點擊時發生；你之後把內容貼到哪個服務，適用該服務自身的隱私權政策。
 
 **權限用途**
 - 讀取 Google Meet、Microsoft Teams 與 YouTube 頁面內容：用於擷取字幕、顯示字幕視窗、讀取逐字稿。
@@ -48,7 +48,7 @@ This data is stored only in your browser (`chrome.storage.local`). You can delet
 Translation uses Chrome's built-in translator and runs on your computer. Content is never sent to an external server.
 
 **Content you choose to share**
-When you click "Summarize in ChatGPT", the extension opens chatgpt.com with that meeting's content. When you use a copy action, the content goes to your clipboard. These happen only when you click, and the receiving service's own privacy policy applies afterwards.
+When you use a copy action, the content goes to your clipboard. This happens only when you click, and wherever you paste it, that service's own privacy policy applies.
 
 **Permissions**
 - Read Google Meet, Microsoft Teams and YouTube pages: to capture captions, show the caption window and read transcripts.

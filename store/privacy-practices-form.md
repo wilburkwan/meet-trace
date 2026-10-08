@@ -21,7 +21,7 @@ Meet Trace captures the live captions of Google Meet and Microsoft Teams meeting
 說明：All JavaScript is bundled in the package. No external scripts or eval are used.
 
 ## 資料使用（Data usage）
-建議勾選：**網站內容（Website content）**。理由是擴充功能會讀取並在本機保存會議字幕；使用者按「用 ChatGPT 摘要」時，也會把內容帶到 chatgpt.com。
+建議勾選：**網站內容（Website content）**。理由是擴充功能會讀取並在本機保存會議字幕；內容不會傳到任何伺服器。
 
 其餘類別（個人識別資訊、健康、財務、驗證資訊、個人通訊、位置、網頁瀏覽記錄、使用者活動）**都不要勾**。
 
