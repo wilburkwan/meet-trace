@@ -1,15 +1,19 @@
 import { ScissorsIcon } from "@phosphor-icons/react";
 import { MAX_SEGMENT_PAUSE_MS, MIN_SEGMENT_PAUSE_MS } from "@/core/constants";
 import { useI18n } from "@/ui-kit/i18n-provider";
-import { SegmentModePicker } from "./segment-mode-picker";
+import { SegmentModePicker, type SegmentMode } from "./segment-mode-picker";
 import { useStoredSetting } from "./use-stored-setting";
 
 const PRESET_SECONDS = [2, 3, 5, 8] as const;
 const STEP_MS = 500;
 
-/** Caption segmentation: how long a pause ends the current segment. */
+/**
+ * Caption segmentation. The pause length only applies to pause-based segments;
+ * in speaker mode a speaker's whole turn is one block, so the slider is hidden.
+ */
 export const SegmentSettings = () => {
   const { t } = useI18n();
+  const [mode, setMode] = useStoredSetting<SegmentMode>("segmentMode");
   const [pauseMs, setPauseMs] = useStoredSetting<number>("segmentPauseMs");
   const seconds = (pauseMs ?? 0) / 1000;
 
@@ -25,9 +29,9 @@ export const SegmentSettings = () => {
         </div>
       </div>
 
-      <SegmentModePicker />
+      {mode !== null && <SegmentModePicker mode={mode} onChange={setMode} />}
 
-      {pauseMs !== null && (
+      {mode === "pause" && pauseMs !== null && (
         <>
           <div className="mb-2 flex items-baseline justify-between">
             <span className="text-sm">{t("settings.segmentPause")}</span>

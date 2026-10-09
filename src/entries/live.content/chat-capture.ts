@@ -1,6 +1,7 @@
 import type { ContentScriptContext } from "wxt/utils/content-script-context";
 import { addChatMessageToHistory } from "@live/session-recorder";
 import type { SavedChatMessage } from "@live/models";
+import { formatClock24 } from "@/core/clock";
 import {
   findChatRoot,
   isChatPanelOpen,
@@ -28,11 +29,7 @@ const readTime = (element: Element | null): string =>
   element?.getAttribute("datetime")?.trim() ||
   "";
 
-const formatCapturedTime = (timestamp: number): string =>
-  new Intl.DateTimeFormat(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(timestamp);
+const formatCapturedTime = (timestamp: number): string => formatClock24(timestamp, false);
 
 const readGroupAuthor = (group: HTMLElement, time: string): string => {
   const knownAuthor = readText(group.querySelector(AUTHOR_SELECTOR));

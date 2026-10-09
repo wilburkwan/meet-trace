@@ -13,7 +13,7 @@ import {
   refreshTrackedCaptionStreams,
   setTrackedCaptionStream,
 } from "@live/entry-tracker";
-import { isMeetingEndedPage } from "@live/call-status";
+import { isMeetingEndedPage, stopRecordingOnMeetingEnd } from "@live/call-status";
 import { getPlatform } from "@live/adapters";
 import { MAX_SEGMENT_PAUSE_MS, MIN_SEGMENT_PAUSE_MS } from "@/core/constants";
 
@@ -130,7 +130,10 @@ export function startObserver(): void {
     const hasMeetingEnded = isMeetingEndedPage();
 
     if (hasMeetingEnded) {
-      if (!isMeetingEnded) setMeetingEnded(true);
+      if (!isMeetingEnded) {
+        setMeetingEnded(true);
+        stopRecordingOnMeetingEnd();
+      }
       if (observer) {
         observer.disconnect();
         observer = null;

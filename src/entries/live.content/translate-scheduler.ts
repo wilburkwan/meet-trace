@@ -31,17 +31,15 @@ function viewportDistance(captionId: number, container: HTMLElement): number {
   return cRect.top - elRect.bottom;
 }
 
-function needsTranslation(c: Caption): boolean {
+// Failed captions are only retried when asked (toggle, new text, manual
+// retry); retrying them on our own would loop forever while a model is missing.
+function needsTranslation(c: Caption, retryErrors = true): boolean {
   if (inFlight.has(c.id)) return false;
   if (c.translationStatus === TranslationStatus.Translating) return false;
   if (c.userEdited) return false; // never overwrite a manual edit
+  if (c.translationStatus === TranslationStatus.Error) return retryErrors;
   if (c.translation && c.text.length !== c.lastTranslatedLength) return true;
-  if (
-    c.translationStatus === TranslationStatus.Pending ||
-    c.translationStatus === TranslationStatus.Error
-  ) {
-    return true;
-  }
+  if (c.translationStatus === TranslationStatus.Pending) return true;
   return !c.translation;
 }
 
@@ -81,7 +79,7 @@ function pump(): void {
     translateCaption(caption).finally(() => {
       inFlight.delete(id);
       // Text kept growing (or the caption ended) while translating: catch up.
-      if (caption.isFinalized && needsTranslation(caption)) queue.add(id);
+      if (caption.isFinalized && needsTranslation(caption, false)) queue.add(id);
       pump();
     });
   }
@@ -113,12 +111,12 @@ export function requestLiveTranslation(caption: Caption): void {
 // Queue every finalized, untranslated caption within `maxDistancePx` of the
 // viewport. Used when translation is toggled on and while scrolling, so we
 // translate what's on screen first and skip captions that are too far away.
-export function enqueueNearbyCaptions(maxDistancePx = Infinity): void {
+export function enqueueNearbyCaptions(maxDistancePx = Infinity, retryErrors = false): void {
   if (!settings.translationEnabled) return;
   const container = getScrollContainer();
 
   for (const caption of captions) {
-    if (!caption.isFinalized || !needsTranslation(caption)) continue;
+    if (!caption.isFinalized || !needsTranslation(caption, retryErrors)) continue;
     if (maxDistancePx !== Infinity && container) {
       if (viewportDistance(caption.id, container) > maxDistancePx) continue;
     }

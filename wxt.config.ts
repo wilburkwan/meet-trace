@@ -40,7 +40,8 @@ export default defineConfig({
     name: "Meet Trace",
     description: "Live captions with free on-device translation for Google Meet and Microsoft Teams, plus meeting history and YouTube transcripts.",
     version,
-    permissions: ["storage", "unlimitedStorage", "activeTab", "clipboardWrite"],
+    // tabCapture + offscreen record meeting audio; downloads saves it to disk.
+    permissions: ["storage", "unlimitedStorage", "activeTab", "clipboardWrite", "tabCapture", "offscreen", "downloads"],
     host_permissions: [
       "https://meet.google.com/*",
       "https://teams.cloud.microsoft/*",

@@ -1,6 +1,7 @@
 import { ClosedCaptioningIcon, TranslateIcon } from "@phosphor-icons/react";
 import { useI18n } from "@/ui-kit/i18n-provider";
 import { MeetingSection } from "./meeting/meeting-section";
+import { RecordingSection } from "./recording/recording-section";
 import { YouTubeSection } from "./youtube/youtube-section";
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
 
       <div className="flex flex-col gap-4">
         <MeetingSection />
+        <RecordingSection />
         <YouTubeSection />
 
         <section className="rounded-lg bg-(--ms-app-surface) p-3.5">

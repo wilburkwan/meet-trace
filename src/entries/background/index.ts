@@ -1,3 +1,4 @@
+import { isOffscreenRequest } from "@/core/recording";
 import { getSettings, saveSettings } from "./prefs";
 import {
   getMeetingHistory,
@@ -8,10 +9,25 @@ import {
   importMeetingHistory,
   getStorageUsage,
 } from "./session-store";
+import {
+  getRecordingStatus,
+  saveUnsavedRecordings,
+  startRecording,
+  stopRecording,
+  stopRecordingForTab,
+} from "./recording/recording-service";
+import { saveLeftoverRecordings } from "./recording/save-tabs";
+import { setRecordingMic } from "./recording/recording-mic";
 
 export default defineBackground(() => {
-  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-    handleMessage(message)
+  // A reload or browser restart ends any recording: save what was captured.
+  chrome.runtime.onInstalled.addListener(() => void saveLeftoverRecordings());
+  chrome.runtime.onStartup.addListener(() => void saveLeftoverRecordings());
+
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // Requests for the offscreen recorder are answered there, not here.
+    if (isOffscreenRequest(message)) return false;
+    handleMessage(message, sender)
       .then(sendResponse)
       .catch((error) => {
         sendResponse({ success: false, error: String(error) });
@@ -21,7 +37,10 @@ export default defineBackground(() => {
   });
 });
 
-async function handleMessage(message: Record<string, unknown>): Promise<unknown> {
+async function handleMessage(
+  message: Record<string, unknown>,
+  sender: chrome.runtime.MessageSender
+): Promise<unknown> {
   switch (message.action) {
     case "getSettings":
       return getSettings();
@@ -58,6 +77,25 @@ async function handleMessage(message: Record<string, unknown>): Promise<unknown>
 
     case "getStorageUsage":
       return getStorageUsage();
+
+    case "recStatus":
+      return getRecordingStatus();
+
+    case "recStart":
+      return startRecording(message.tabId as number);
+
+    case "recStop":
+    case "recCaptureEnded":
+      return stopRecording();
+
+    case "recSetMic":
+      return setRecordingMic(message.enabled === true);
+
+    case "recSaveLeftovers":
+      return saveUnsavedRecordings();
+
+    case "recMeetingEnded":
+      return stopRecordingForTab(sender.tab?.id);
 
     default:
       return { success: false, error: "Unknown action" };

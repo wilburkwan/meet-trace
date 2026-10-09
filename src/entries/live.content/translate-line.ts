@@ -55,12 +55,14 @@ export async function translateCaption(
       if (stillExistsInUI) {
         captionObj.lastTranslatedLength = textToTranslate.length;
         captionObj.translation = response.translation;
+        captionObj.needsModel = false;
         captionObj.translationStatus = TranslationStatus.Semantic;
         refreshCaption();
       }
     } else if (stillExistsInUI) {
       captionObj.translationStatus = TranslationStatus.Error;
       captionObj.translationError = response?.error || "Translation failed";
+      captionObj.needsModel = Boolean(response?.needsModel);
       refreshCaption();
     }
   } catch (e) {

@@ -4,6 +4,7 @@ import {
   AutoCaptionsCard,
   AutoPanelCard,
   LanguageSelect,
+  RecordingCard,
   SegmentSettings,
   ThemePicker,
   TranslationSetup,
@@ -46,6 +47,7 @@ export default function App() {
           <AutoCaptionsCard />
           <TranslationSetup />
           <SegmentSettings />
+          <RecordingCard />
           <LanguageSelect />
           <ThemePicker />
 

@@ -1,4 +1,5 @@
 import type { Caption } from "@live/models";
+import { formatClock24 } from "@/core/clock";
 import { MAX_CAPTIONS, TranslationStatus } from "@live/config";
 import {
   captions,
@@ -76,7 +77,7 @@ export function addOrUpdateCaption(
     id: newId,
     speaker,
     text,
-    time: new Date().toLocaleTimeString(),
+    time: formatClock24(Date.now()),
     translation: "",
     translationStatus: TranslationStatus.Pending,
     lastTranslatedLength: 0,

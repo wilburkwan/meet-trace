@@ -23,12 +23,14 @@ export const formatClock = (timestamp: number, locale: UiLocale): string =>
   new Date(timestamp).toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
+    hourCycle: "h23",
   });
 
 export const formatFullDate = (timestamp: number, locale: UiLocale): string =>
   new Date(timestamp).toLocaleString(locale, {
     dateStyle: "full",
     timeStyle: "short",
+    hourCycle: "h23",
   });
 
 /** Compact, localized duration, e.g. "1 h 20 min" / "1 小時 20 分鐘". */

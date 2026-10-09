@@ -150,7 +150,7 @@ export const getCapturedCaptionCount = (): number => allCaptions.size;
  */
 export const buildTranscriptText = (chatHeading: string): string => {
   const title = currentSession?.title ?? getMeetingTitle() ?? currentSession?.meetingCode ?? "";
-  const lines = [title, new Date(currentSession?.startTime ?? Date.now()).toLocaleString(), ""];
+  const lines = [title, new Date(currentSession?.startTime ?? Date.now()).toLocaleString(undefined, { hourCycle: "h23" }), ""];
   const captions = Array.from(allCaptions.values()).sort((a, b) => a.timestamp - b.timestamp);
   for (const block of groupCaptions(captions, settings.segmentMode === "speaker")) {
     lines.push(`[${block.time}] ${block.speaker}: ${block.text}`);

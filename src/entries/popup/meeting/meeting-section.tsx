@@ -6,7 +6,7 @@ import { useI18n } from "@/ui-kit/i18n-provider";
 type State =
   | { kind: "hidden" }
   | { kind: "inactive"; tabId: number }
-  | { kind: "active" }
+  | { kind: "active"; tabId: number }
   | { kind: "unreachable" };
 
 /** Popup card on a meeting tab: shows whether Meet Trace runs there and starts it. */
@@ -20,7 +20,7 @@ export const MeetingSection = () => {
       if (tab?.id === undefined || !isMeetingTabUrl(tab.url)) return;
       try {
         const status: PanelStatus = await chrome.tabs.sendMessage(tab.id, { action: "msPanelStatus" });
-        setState(status.active ? { kind: "active" } : { kind: "inactive", tabId: tab.id });
+        setState(status.active ? { kind: "active", tabId: tab.id } : { kind: "inactive", tabId: tab.id });
       } catch {
         setState({ kind: "unreachable" }); // tab opened before the extension loaded
       }
@@ -32,7 +32,7 @@ export const MeetingSection = () => {
   const start = async () => {
     if (state.kind !== "inactive") return;
     await chrome.tabs.sendMessage(state.tabId, { action: "msPanelStart" });
-    setState({ kind: "active" });
+    setState({ kind: "active", tabId: state.tabId });
     window.close(); // let the user see the caption window on the page
   };
 

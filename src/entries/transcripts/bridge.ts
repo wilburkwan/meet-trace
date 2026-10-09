@@ -1,3 +1,4 @@
+import { formatClock24 } from "@/core/clock";
 import type { MeetingSession } from "./sections";
 
 export type StorageInfo = {
@@ -11,6 +12,14 @@ const ensureSuccess = (response: { success?: boolean; error?: string }) => {
   }
 };
 
+// Older captions were saved as "上午12:38:33"; show every one as 24-hour time.
+const withClock24 = (session: MeetingSession): MeetingSession => ({
+  ...session,
+  captions: session.captions.map((caption) =>
+    Number.isFinite(caption.timestamp) ? { ...caption, time: formatClock24(caption.timestamp) } : caption
+  ),
+});
+
 export const fetchMeetingHistory = async (): Promise<MeetingSession[]> => {
   const response = await chrome.runtime.sendMessage({
     action: "getMeetingHistory",
@@ -19,7 +28,7 @@ export const fetchMeetingHistory = async (): Promise<MeetingSession[]> => {
   if (!Array.isArray(response.sessions)) {
     throw new Error("Meeting history has an invalid format");
   }
-  return response.sessions;
+  return response.sessions.map(withClock24);
 };
 
 export const fetchStorageInfo = async (): Promise<StorageInfo> => {

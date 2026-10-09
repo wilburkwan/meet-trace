@@ -1,6 +1,7 @@
 import type { TranslateResponse } from "@live/models";
 import { t } from "@live/i18n";
 import {
+  type DownloadMonitor,
   getBuiltInAi,
   toTranslatorLanguage,
   type ChromeLanguageDetector,
@@ -71,27 +72,53 @@ const getTranslator = (sourceLanguage: string, targetLanguage: string): Promise<
 };
 
 /**
- * Called synchronously from a click (the Translations toggle or language
- * picker): Chrome only allows model downloads during a user gesture.
+ * Downloads the model for the caption's language pair. Call synchronously from
+ * a click: Chrome only downloads models during a user gesture. With automatic
+ * detection the pair comes from the last detected language (or this caption).
  */
-export const prepareTranslatorFromClick = (sourceSetting: string, targetSetting: string): void => {
-  const { Translator, LanguageDetector } = getBuiltInAi();
-  if (sourceSetting === "auto") {
-    LanguageDetector?.create().catch(() => {});
-    return;
-  }
-  const sourceLanguage = toTranslatorLanguage(sourceSetting);
-  const targetLanguage = toTranslatorLanguage(targetSetting);
-  if (!Translator || sourceLanguage === targetLanguage) return;
-  // Not awaited before create(): the gesture must still be active.
-  Translator.create({ sourceLanguage, targetLanguage })
-    .then(() => translators.delete(`${sourceLanguage}->${targetLanguage}`))
-    .catch(() => {});
+export const downloadModelFromClick = async (
+  text: string,
+  sourceSetting: string,
+  targetSetting: string,
+  onProgress: (percent: number) => void
+): Promise<void> => {
+  const { Translator } = getBuiltInAi();
+  if (!Translator) throw new Error(t("overlay.browserUnsupported"));
+  const target = toTranslatorLanguage(targetSetting);
+  const source =
+    (sourceSetting === "auto" ? lastDetectedLanguage : toTranslatorLanguage(sourceSetting)) ??
+    (await resolveSourceLanguage(text, sourceSetting));
+  if (!source) throw new Error(t("overlay.needsModel"));
+  if (source === target) return;
+
+  const monitor = (m: DownloadMonitor) =>
+    m.addEventListener("downloadprogress", (event) => onProgress(Math.round(event.loaded * 100)));
+  const translator = await Translator.create({ sourceLanguage: source, targetLanguage: target, monitor });
+  translators.set(`${source}->${target}`, Promise.resolve(translator));
 };
 
+/**
+ * Called synchronously from a click (the Translations toggle or language
+ * picker) so the model is ready before captions need it. With automatic
+ * detection and nothing said yet, only the detector model is fetched.
+ */
+export const prepareTranslatorFromClick = (
+  sourceSetting: string,
+  targetSetting: string,
+  sampleText: string
+): Promise<void> => {
+  if (sourceSetting === "auto" && !lastDetectedLanguage && !sampleText.trim()) {
+    return getDetector()?.then(() => undefined) ?? Promise.resolve();
+  }
+  return downloadModelFromClick(sampleText, sourceSetting, targetSetting, () => {});
+};
+
+const needsModel = (error: unknown): boolean =>
+  error instanceof ModelNotReadyError ||
+  (error instanceof DOMException && error.name === "NotAllowedError");
+
 const toErrorMessage = (error: unknown, source: string, target: string): string => {
-  if (error instanceof ModelNotReadyError) return t("overlay.needsModel");
-  if (error instanceof DOMException && error.name === "NotAllowedError") return t("overlay.needsModel");
+  if (needsModel(error)) return t("overlay.needsModel");
   if (error instanceof UnsupportedPairError) return t("overlay.unsupported", { source, target });
   const reason = error instanceof Error ? error.message : String(error);
   return t("overlay.failed", { reason });
@@ -109,7 +136,7 @@ export const translateWithChrome = async (
 
   const target = toTranslatorLanguage(targetSetting);
   const source = await resolveSourceLanguage(text, sourceSetting);
-  if (!source) return { success: false, error: t("overlay.needsModel") };
+  if (!source) return { success: false, error: t("overlay.needsModel"), needsModel: true };
   if (source === target) return { success: true, translation: text };
 
   try {
@@ -118,6 +145,6 @@ export const translateWithChrome = async (
   } catch (error) {
     // Same language family (e.g. zh -> zh-Hant) without a model: show as-is.
     if (baseLanguage(source) === baseLanguage(target)) return { success: true, translation: text };
-    return { success: false, error: toErrorMessage(error, source, target) };
+    return { success: false, error: toErrorMessage(error, source, target), needsModel: needsModel(error) };
   }
 };

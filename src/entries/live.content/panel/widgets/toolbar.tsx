@@ -17,7 +17,7 @@ import {
 } from "@live/translate-scheduler";
 import type { Settings } from "@live/models";
 import { saveOverlaySettings } from "@live/panel/common";
-import { prepareTranslatorFromClick } from "@live/chrome-translator";
+import { prepareModelFromClick } from "@live/model-download";
 import { t } from "@live/i18n";
 import { CopyAllButton } from "./copy-all-button";
 import { FontSizeControlContainer } from "./text-size";
@@ -50,17 +50,17 @@ export const Header = ({
   const handleToggleTranslation = async () => {
     const enabled = !settings.translationEnabled;
     // Runs inside the click so Chrome may download the model if needed.
-    if (enabled) prepareTranslatorFromClick(settings.sourceLanguage, settings.targetLanguage);
+    if (enabled) prepareModelFromClick();
     const saved = await saveOverlaySettings({ translationEnabled: enabled });
     if (!saved) return;
-    if (enabled) enqueueNearbyCaptions(MAX_AUTO_TRANSLATE_DISTANCE);
+    if (enabled) enqueueNearbyCaptions(MAX_AUTO_TRANSLATE_DISTANCE, true);
     else clearTranslationQueue();
   };
 
   const handleTargetLanguageChange = (
     event: ChangeEvent<HTMLSelectElement>
   ) => {
-    prepareTranslatorFromClick(settings.sourceLanguage, event.target.value);
+    prepareModelFromClick(event.target.value);
     void saveOverlaySettings({ targetLanguage: event.target.value });
   };
 

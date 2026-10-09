@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react";
 import { t } from "@live/i18n";
 import { TranslationEditor } from "../translation-input";
+import { ModelDownloadButton } from "./model-download-button";
 import type { CopyTarget, TranslationTone } from "./use-line-row";
 
 /** Where a segment sits in a same-speaker block ("single" = not grouped). */
@@ -90,10 +91,8 @@ export const CaptionItem = ({
     )}
 
     <div
-      // group/pair: hovering either side highlights the original and its translation together
-      className={`group/pair grid gap-3 ${
-        isTranslationEnabled ? "grid-cols-2" : "grid-cols-1"
-      }`}
+      // group/pair: hovering either line highlights the original and its translation together
+      className="group/pair flex flex-col gap-0.5"
     >
       <button
         type="button"
@@ -107,7 +106,8 @@ export const CaptionItem = ({
       </button>
 
       {isTranslationEnabled && (
-        <div className="flex items-start gap-1">
+        // Translation sits under the original, marked by a thin accent bar
+        <div className="flex items-start gap-1 border-l-2 border-(--ms-overlay-translation)/40 pl-2">
           {isEditing ? (
             <TranslationEditor
               initialValue={caption.translation}
@@ -130,6 +130,10 @@ export const CaptionItem = ({
                 <WarningCircleIcon className="ml-1 inline size-3.5" />
               )}
             </button>
+          )}
+
+          {caption.needsModel && translationTone === "error" && !isEditing && (
+            <ModelDownloadButton caption={caption} />
           )}
 
           {isReloadVisible && (

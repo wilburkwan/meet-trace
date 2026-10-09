@@ -16,6 +16,8 @@ export type Settings = {
   translationEnabled: boolean;
   isOverlayMinimized: boolean;
   captionFontSize: number;
+  /** Mix the user's microphone into recordings (asks for access on the settings page). */
+  recordMicrophone: boolean;
 };
 
 export type MeetingSession = {

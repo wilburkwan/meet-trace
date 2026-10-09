@@ -8,6 +8,8 @@ export type Caption = {
   translation: string;
   translationStatus: TranslationStatus;
   translationError?: string;
+  /** The last attempt failed because the on-device model is missing. */
+  needsModel?: boolean;
   lastTranslatedLength: number;
   userEdited?: boolean;
   isFinalized?: boolean;
@@ -30,6 +32,7 @@ export type TranslateResponse = {
   success: boolean;
   translation?: string;
   error?: string;
+  needsModel?: boolean;
 };
 
 export type SavedCaption = {

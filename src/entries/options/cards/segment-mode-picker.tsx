@@ -1,20 +1,19 @@
 import { ChatsTeardropIcon, TimerIcon } from "@phosphor-icons/react";
 import type { MessageKey } from "@/core/i18n";
 import { useI18n } from "@/ui-kit/i18n-provider";
-import { useStoredSetting } from "./use-stored-setting";
 
-type Mode = "pause" | "speaker";
+export type SegmentMode = "pause" | "speaker";
 
-const MODES: readonly { id: Mode; icon: typeof TimerIcon; label: MessageKey; hint: MessageKey }[] = [
+type Props = { mode: SegmentMode; onChange: (mode: SegmentMode) => void };
+
+const MODES: readonly { id: SegmentMode; icon: typeof TimerIcon; label: MessageKey; hint: MessageKey }[] = [
   { id: "pause", icon: TimerIcon, label: "settings.segmentModePause", hint: "settings.segmentModePauseHint" },
   { id: "speaker", icon: ChatsTeardropIcon, label: "settings.segmentModeSpeaker", hint: "settings.segmentModeSpeakerHint" },
 ];
 
 /** Choose between pause-based segments and one block per speaker (like Google Meet). */
-export const SegmentModePicker = () => {
+export const SegmentModePicker = ({ mode, onChange }: Props) => {
   const { t } = useI18n();
-  const [mode, setMode] = useStoredSetting<Mode>("segmentMode");
-  if (mode === null) return null;
 
   return (
     <div className="mb-5">
@@ -28,7 +27,7 @@ export const SegmentModePicker = () => {
               type="button"
               role="radio"
               aria-checked={selected}
-              onClick={() => setMode(id)}
+              onClick={() => onChange(id)}
               className={`flex cursor-pointer gap-3 rounded-lg border p-3 text-left transition-colors ${
                 selected
                   ? "border-(--ms-primary) bg-(--ms-app-canvas)"
