@@ -15,6 +15,9 @@ Meet Trace captures the live captions of Google Meet and Microsoft Teams meeting
 | Host permission `https://meet.google.com/*` | Reads the meeting's caption text from the page and shows the floating caption/translation window inside Google Meet. |
 | Content scripts on `teams.live.com`, `teams.microsoft.com`, `teams.cloud.microsoft` | Same as above, for Microsoft Teams on the web. |
 | Content script on `www.youtube.com` | Opens and reads the video's "Show transcript" panel, only when the user clicks "Read transcript" in the popup. |
+| `tabCapture` | Used only when the user explicitly triggers audio recording in the popup to capture the audio stream of the meeting or video tab (e.g. Google Meet, Microsoft Teams) for local recording. |
+| `offscreen` | Required in Manifest V3 because background service workers lack access to DOM audio APIs (AudioContext and MediaRecorder). An offscreen document mixes the tab audio with optional microphone input and encodes the WebM recording locally. |
+| `downloads` | Saves the completed meeting audio recording file (.webm) directly to the user's local Downloads folder upon ending the recording. All recording data remains strictly on-device without remote transmission. |
 
 ## 遠端程式碼（Remote code）
 選 **否，我不使用遠端程式碼**（No, I am not using remote code）。
