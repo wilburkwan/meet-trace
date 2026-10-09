@@ -6,7 +6,7 @@
 
 | 檔案 | 用途 | 上傳到哪裡 |
 |---|---|---|
-| `meet-trace-1.2.0-chrome.zip` | 擴充功能本體（已壓縮，附 LICENSE） | 「套件」→ 上傳新套件 |
+| `meet-trace-1.3.0-chrome.zip` | 擴充功能本體（已壓縮，附 LICENSE） | 「套件」→ 上傳新套件 |
 | `images/store-icon-128.png` | 商店圖示 128×128 | 商店資訊 → 商店圖示 |
 | `images/screenshot-1-live-translation.png` | 截圖：會議中即時翻譯 | 商店資訊 → 螢幕擷取畫面 |
 | `images/screenshot-2-settings.png` | 截圖：設定頁 | 同上 |
@@ -23,7 +23,7 @@
 ## 🚀 上架步驟
 
 1. **註冊開發人員帳號**：到 https://chrome.google.com/webstore/devconsole ，用 Google 帳號登入，支付一次性註冊費 US$5，並完成身分驗證。
-2. **新增項目**：按「新增項目」，上傳 `meet-trace-1.2.0-chrome.zip`。
+2. **新增項目**：按「新增項目」，上傳 `meet-trace-1.3.0-chrome.zip`。
 3. **商店資訊**：
    - 從 `listing-zh-TW.md` 複製簡短說明、詳細說明，類別選「生產力 › 溝通」。
    - 上傳商店圖示、5 張截圖、小型宣傳圖塊（大型橫幅選填）。
