@@ -1,13 +1,9 @@
 # Dependencies
 node_modules/
 
-# Build output (WXT)
+# Build output (WXT internal)
 .output/
 .wxt/
-dist/
-
-# Packaged builds (recreate with `pnpm zip`)
-*.zip
 
 # Logs
 *.log

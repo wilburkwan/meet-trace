@@ -3,6 +3,7 @@ import type { MessageKey } from "@/core/i18n";
 import {
   toFileName,
   toPlainText,
+  toTranscriptWithTimestamps,
   toSrt,
   type TranscriptResponse,
   type VideoTranscript,
@@ -67,7 +68,10 @@ export const useYouTubeTranscript = () => {
 
   const copy = async (which: "text" | "prompt") => {
     if (state.kind !== "ready") return;
-    const text = toPlainText(state.transcript);
+    const text =
+      which === "prompt"
+        ? toTranscriptWithTimestamps(state.transcript)
+        : toPlainText(state.transcript);
     const { targetLanguage } = (await chrome.runtime.sendMessage({ action: "getSettings" }))?.settings ?? {};
     const language = new Intl.DisplayNames([locale], { type: "language" }).of(targetLanguage ?? "en") ?? "English";
     await navigator.clipboard.writeText(

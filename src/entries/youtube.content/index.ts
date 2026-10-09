@@ -1,12 +1,15 @@
 import type { TranscriptRequest, TranscriptResponse } from "@/core/transcript";
+import { startTranscriptButtons } from "./transcript-buttons";
 import { readTranscript } from "./transcript-reader";
 
-/** Answers the popup's "read transcript" request on YouTube video pages. */
+/** Answers the popup's "read transcript" request and injects quick copy buttons on YouTube video pages. */
 export default defineContentScript({
-  matches: ["https://www.youtube.com/*"],
+  matches: ["https://*.youtube.com/*", "https://youtube.com/*"],
   runAt: "document_idle",
 
   main() {
+    startTranscriptButtons();
+
     chrome.runtime.onMessage.addListener((message: TranscriptRequest, _sender, sendResponse) => {
       if (message?.action !== "ytReadTranscript") return false;
       readTranscript()
